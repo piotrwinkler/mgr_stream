@@ -13,7 +13,7 @@ num_ftrs = model_ft.head.in_features
 model_ft.head = nn.Linear(num_ftrs, num_classes)
 input_size = 224
 
-model_ft.load_state_dict(torch.load("NN_model.pt"))
+model_ft.load_state_dict(torch.load("NN_model.pt", map_location=torch.device('cpu')))
 model_ft.eval()
 
 device = "cpu"
