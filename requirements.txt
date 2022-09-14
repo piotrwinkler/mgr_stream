@@ -3,3 +3,4 @@ torchaudio==0.12.1
 torchmetrics==0.9.3
 torchvision==0.13.1
 Pillow==9.2.0
+st-clickable-images==0.0.3
