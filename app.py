@@ -9,18 +9,42 @@ from PIL import Image
 from st_clickable_images import clickable_images
 from torchvision import models, transforms
 
+
+def load_swin_model():
+    model_ft = models.swin_t()
+    num_ftrs = model_ft.head.in_features
+    model_ft.head = nn.Linear(num_ftrs, num_classes)
+    model_ft.load_state_dict(torch.load("swin_model.pt", map_location=torch.device('cpu')))
+    model_ft.eval()
+    return model_ft
+
+
+def load_convnext_model():
+    model_ft = models.convnext_large(weights=None)
+    num_ftrs = model_ft.classifier[2].in_features
+    model_ft.classifier[2] = nn.Linear(num_ftrs, num_classes, bias=True)
+    model_ft.load_state_dict(torch.load("convnext_model.pt", map_location=torch.device('cpu')))
+    model_ft.eval()
+    return model_ft
+
+
+def load_resnet_model():
+    model_ft = models.resnet50(weights=None)
+    num_ftrs = model_ft.fc.in_features
+    model_ft.fc = nn.Linear(num_ftrs, num_classes)
+    model_ft.load_state_dict(torch.load("resnet_model.pt", map_location=torch.device('cpu')))
+    model_ft.eval()
+    return model_ft
+
+
 CURRENT_DIR = Path(__file__).cwd()
 num_classes = 4
-
+input_size = 224
 """Analyze breast density based on mammogram image"""
 
-model_ft = models.swin_t()
-num_ftrs = model_ft.head.in_features
-model_ft.head = nn.Linear(num_ftrs, num_classes)
-input_size = 224
-
-model_ft.load_state_dict(torch.load("NN_model.pt", map_location=torch.device('cpu')))
-model_ft.eval()
+swin_model = load_swin_model()
+convnext_model = load_convnext_model()
+resnet_model = load_resnet_model()
 
 device = "cpu"
 transforms = transforms.Compose([
@@ -68,7 +92,12 @@ if pillow_image is not None:
     preprocessed_img = transforms(pillow_image)
     preprocessed_img = preprocessed_img.unsqueeze(0)
     preprocessed_img = preprocessed_img.to(device)
-    output = model_ft(preprocessed_img)
+
+    output1 = swin_model(preprocessed_img)
+    output2 = convnext_model(preprocessed_img)
+    output3 = resnet_model(preprocessed_img)
+    output = output1 + output2 + output3
+
     _, preds = torch.max(output, 1)
     st.write(f"Density class prediction: {preds.item()+1}")
     if clicked > -1:
