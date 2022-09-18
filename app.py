@@ -20,7 +20,7 @@ def load_swin_model():
 
 
 def load_convnext_model():
-    model_ft = models.convnext_large(weights=None)
+    model_ft = models.convnext_tiny(weights=None)
     num_ftrs = model_ft.classifier[2].in_features
     model_ft.classifier[2] = nn.Linear(num_ftrs, num_classes, bias=True)
     model_ft.load_state_dict(torch.load("convnext_model.pt", map_location=torch.device('cpu')))
