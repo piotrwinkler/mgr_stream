@@ -40,7 +40,7 @@ def load_resnet_model():
 CURRENT_DIR = Path(__file__).cwd()
 num_classes = 4
 input_size = 224
-"""Analyze breast density based on mammogram image"""
+"""Analyze breast density based on mammogram image using neural networks ensembling"""
 
 swin_model = load_swin_model()
 convnext_model = load_convnext_model()
@@ -79,6 +79,7 @@ if img is None:
         img_style={"margin": "5px", "height": "200px"},
     )
 
+st.write(f"Analysis will start automatically when image is chosen")
 pillow_image = None
 if img is not None:
     pillow_image = Image.open(img)
@@ -105,7 +106,7 @@ if pillow_image is not None:
 
     st.write("\n")
     st.write("Scores reached by model for particular classes:")
-    st.write(f"Class 1 score: {output[0][0].item()}")
-    st.write(f"Class 2 score: {output[0][1].item()}")
-    st.write(f"Class 3 score: {output[0][2].item()}")
-    st.write(f"Class 4 score: {output[0][3].item()}")
+    st.write("Class 1 score: {:.4f}".format(round(output[0][0].item(), 4)))
+    st.write("Class 2 score: {:.4f}".format(round(output[0][1].item(), 4)))
+    st.write("Class 3 score: {:.4f}".format(round(output[0][2].item(), 4)))
+    st.write("Class 4 score: {:.4f}".format(round(output[0][3].item(), 4)))
